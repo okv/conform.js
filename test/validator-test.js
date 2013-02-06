@@ -395,6 +395,66 @@ vows.describe('revalidator', {
           "return an object with `valid` set to false": assertInvalid
         }
       },
+      "and option <castSource>:true": {
+        topic: function () {
+          var schema = {
+            properties: {
+              answer: { type: "integer" },
+              answer2: { type: "number" },
+              is_ready1: { type: "boolean" },
+              is_ready2: { type: "boolean" },
+              is_ready3: { type: "boolean" },
+              is_ready4: { type: "boolean" },
+              is_ready5: { type: "boolean" },
+              is_ready6: { type: "boolean" },
+            }
+          };
+          var source = {
+            answer: "42",
+            answer2: "42.2",
+            is_ready1: "true",
+            is_ready2: "1",
+            is_ready3: 1,
+            is_ready4: "false",
+            is_ready5: "0",
+            is_ready6: 0
+          };
+          var options = { cast: true, castSource: true };
+          return {
+            res: revalidator.validate(source, schema, options),
+            source: source
+          };
+        },
+        "return an object with `valid` set to true": function(topic) {
+          return assertValid(topic.res);
+        },
+        "and modified source object": {
+          "with integer": function(topic) {
+            return assert.strictEqual(topic.source.answer, 42);
+          },
+          "with float": function(topic) {
+            return assert.strictEqual(topic.source.answer2, 42.2);
+          },
+          "with boolean true from string 'true'": function(topic) {
+            return assert.strictEqual(topic.source.is_ready1, true);
+          },
+          "with boolean true from string '1'": function(topic) {
+            return assert.strictEqual(topic.source.is_ready2, true);
+          },
+          "with boolean true from number 1": function(topic) {
+            return assert.strictEqual(topic.source.is_ready3, true);
+          },
+          "with boolean false from string 'false'": function(topic) {
+            return assert.strictEqual(topic.source.is_ready4, false);
+          },
+          "with boolean false from string '0'": function(topic) {
+            return assert.strictEqual(topic.source.is_ready5, false);
+          },
+          "with boolean false from number 0": function(topic) {
+            return assert.strictEqual(topic.source.is_ready6, false);
+          },
+        }
+      },
       "and <boolean> property": {
         "is castable 'true/false' string": {
           topic: function (schema) {
