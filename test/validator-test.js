@@ -570,6 +570,55 @@ vows.describe('revalidator', {
             assert.strictEqual(topic.source.planet, undefined);
           }
       }
+    },
+    "with <validateDefaultValue> option": {
+      topic: {
+        properties: {
+          town: {
+            type: "string"
+          },
+          country: {
+            type: "object",
+            properties: {
+              id: { type: "integer" },
+              name: { type: "string" }
+            }
+          },
+          planet: {
+            "type": "string"
+          }
+        }
+      },
+      "enabled": {
+        "and valid default value": {
+          topic: function(schema) {
+            schema.properties.country['default'] = { id: 1, name: "New Zealand" };
+            return revalidator.validate(
+              { town: "Auckland" }, schema, { validateDefaultValue: true }
+            );
+          },
+          "return an object with `valid` set to true": assertValid
+        },
+        "and invalid default value": {
+          topic: function(schema) {
+            schema.properties.country['default'] = { id: "abc", name: "New Zealand" };
+            return revalidator.validate(
+              { town: "Auckland" }, schema, { validateDefaultValue: true }
+            );
+          },
+          "return an object with `valid` set to false": assertInvalid,
+          "and an error concerning the attribute": assertHasError('type', 'id')
+        }
+      },
+      "not enabled": {
+        "and invalid default value": {
+          topic: function(schema) {
+            schema.properties.country['default'] = { id: "abc", name: "New Zealand" };
+            return revalidator.validate({ town: "Auckland" }, schema);
+          },
+          "return an object with `valid` set to true": assertValid
+        }
+      }
     }
   }
 }).export(module);

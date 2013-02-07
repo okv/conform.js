@@ -77,6 +77,7 @@ This will return with a value indicating if the `obj` conforms to the `schema`. 
 * __castSource__: Apply casting (see `cast` option above) to source object. Notice that if this option is set source object will be modified even source object do not conforms to the schema.
 * __additionalProperties__: Default value for object `additionalProperties` attribute.
 * __applyDefaultValue__: Apply value  of `default` attribute to source object.
+* __validateDefaultValue__: If true value of `default` attribute will be checked to conforms schema.
 
 ### Schema
 For a property an `value` is that which is given as input for validation where as an `expected value` is the value of the below fields
