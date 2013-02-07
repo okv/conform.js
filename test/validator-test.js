@@ -487,6 +487,89 @@ vows.describe('revalidator', {
           "return an object with `valid` set to false": assertInvalid
         }
       }
+    },
+    "with <applyDefaultValue> option": {
+      topic: {
+        properties: {
+          town: {
+            type: "string"
+          },
+          country: {
+            type: "object",
+            properties: {
+              id: { type: "integer" },
+              name: { type: "string" }
+            },
+            "default": {
+              id: 1,
+              name: "New Zealand"
+            }
+          },
+          planet: {
+            "type": "string",
+            "default": "Earth"
+          }
+        }
+      },
+      "enabled": {
+        "and acting": {
+          topic: function (schema) {
+            var source = { town: "Auckland" };
+            return {
+              res: revalidator.validate(source, schema, {applyDefaultValue: true}),
+              source: source
+            }
+          },
+          "return an object with `valid` set to true": function(topic) {
+            return assertValid(topic.res);
+          },
+          "and source object with default country and planet": function(topic) {
+            assert.strictEqual(topic.source.town, "Auckland");
+            assert.deepEqual(topic.source.country, {
+              id: 1, name: "New Zealand"
+            });
+            assert.strictEqual(topic.source.planet, "Earth");
+          }
+        },
+        "but not acting (since values in source object is set)": {
+          topic: function (schema) {
+            var source = {
+              town: "New York",
+              country: {
+                id: 2,
+                name: "USA"
+              },
+              planet: "Mars"
+            };
+            return {
+              res: revalidator.validate(source, schema, {applyDefaultValue: true}),
+              source: source
+            }
+          },
+          "return an object with `valid` set to true": function(topic) {
+            return assertValid(topic.res);
+          },
+          "and not modified source object": function(topic) {
+            assert.strictEqual(topic.source.town, "New York");
+            assert.deepEqual(topic.source.country, {id: 2, name: "USA"});
+            assert.strictEqual(topic.source.planet, "Mars");
+          }
+        }
+      },
+      "not enabled": {
+          topic: function (schema) {
+            var source = { town: "Auckland" };
+            return { res: revalidator.validate(source, schema), source: source }
+          },
+          "return an object with `valid` set to true": function(topic) {
+            return assertValid(topic.res);
+          },
+          "and source object with undefined country and planet": function(topic) {
+            assert.strictEqual(topic.source.town, "Auckland");
+            assert.strictEqual(topic.source.country, undefined);
+            assert.strictEqual(topic.source.planet, undefined);
+          }
+      }
     }
   }
 }).export(module);
