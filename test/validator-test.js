@@ -641,6 +641,74 @@ vows.describe('revalidator', {
           "return an object with `valid` set to true": assertValid
         }
       }
+    },
+    "casting": {
+      topic: function() {
+        revalidator.validate.casts.trim = function(value) {
+          return value.replace(/^\s+|\s+$/g, '');
+        };
+        revalidator.validate.casts.stripTags = function(value) {
+          return value.replace(/<(?:.|\n)*?>/gm, '');
+        };
+        return {
+            properties: {
+              town: {
+                type: "string",
+                cast: "trim"
+              },
+              country: {
+                type: "object",
+                properties: {
+                  id: { type: "integer" },
+                  name: { type: "string", cast: "stripTags" }
+                }
+              },
+              planet: {
+                type: "string",
+                cast: ["stripTags", revalidator.validate.casts.trim]
+              }
+            }
+        };
+      },
+      "and castable values": {
+        topic: function(schema) {
+          var getSource = function() {
+            return {
+              town: "  Auckland  ",
+              country: {
+                id: 1,
+                name: "<b>New Zealand</b>"
+              },
+              planet: "  <b>Earth</b>  "
+            };
+          };
+          var source = getSource();
+          return {
+            res: revalidator.validate(source, schema),
+            source: source,
+            originalSource: getSource()
+          };
+        },
+        "return an object with `valid` set to true": function(topic) {
+          assertValid(topic.res);
+        },
+        "and modified source object": function(topic) {
+          assert.strictEqual(
+            topic.source.town,
+            revalidator.validate.casts.trim(topic.originalSource.town)
+          );
+          assert.strictEqual(
+            topic.source.country.name,
+            revalidator.validate.casts.stripTags(topic.originalSource.country.name)
+          );
+          assert.strictEqual(
+            topic.source.planet,
+            revalidator.validate.casts.stripTags(
+              revalidator.validate.casts.trim(topic.originalSource.planet)
+            )
+          );
+        }
+      }
     }
   }
 }).export(module);
