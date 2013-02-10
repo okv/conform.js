@@ -70,14 +70,14 @@ This will return with a value indicating if the `obj` conforms to the `schema`. 
 
 #### Available Options
 
-* __validateFormats__: Enforce format constraints (_default true_)
-* __validateFormatsStrict__: When `validateFormats` is _true_ treat unrecognized formats as validation errors (_default false_)
-* __validateFormatExtensions__: When `validateFormats` is _true_ also validate formats defined in `validate.formatExtensions` (_default true_)
-* __cast__: Enforce casting of some types (for integers/numbers are only supported) when it's possible, e.g. `"42" => 42`, but `"forty2" => "forty2"` for the `integer` type.
-* __castSource__: Apply casting (see `cast` option above) to source object. Notice that if this option is set source object will be modified even source object do not conforms to the schema.
-* __additionalProperties__: Default value for object `additionalProperties` attribute.
-* __applyDefaultValue__: Apply value  of `default` attribute to source object.
-* __validateDefaultValue__: If true value of `default` attribute will be checked to conforms schema.
+* __validateFormats__: Enforce format constraints (*default true*)
+* __validateFormatsStrict__: When `validateFormats` is _true_ treat unrecognized formats as validation errors (*default false*)
+* __validateFormatExtensions__: When `validateFormats` is _true_ also validate formats defined in `validate.formatExtensions` (*default true*)
+* __cast__: Enforce casting of some types (for integers/numbers are only supported) when it's possible, e.g. `"42" => 42`, but `"forty2" => "forty2"` for the `integer` type (*default false*)
+* __castSource__: Apply casting (see `cast` option above) to source object (*default false*)
+* __additionalProperties__: Default value for object `additionalProperties` attribute (*default true*)
+* __applyDefaultValue__: Apply value  of `default` attribute to source object (*default false*)
+* __validateDefaultValue__: If true value of `default` attribute will be checked to conforms schema (*default false*)
 
 ### Schema
 For a property an `value` is that which is given as input for validation where as an `expected value` is the value of the below fields
