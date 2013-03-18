@@ -653,7 +653,8 @@ vows.describe('revalidator', {
         return {
             properties: {
               town: {
-                type: ["string", "null"],
+                type: ["string", "null", "array"],
+                minLength: 3,
                 cast: "trim"
               },
               country: {
@@ -664,67 +665,131 @@ vows.describe('revalidator', {
                 }
               },
               planet: {
-                type: ["string", "integer"],
+                type: ["string", "integer", "object"],
                 cast: ["stripTags", revalidator.validate.casts.trim]
               }
             }
         };
       },
       "castable values": {
-        topic: function(schema) {
-          var getSource = function() {
-            return {
-              town: "  Auckland  ",
-              country: {
-                id: 1,
-                name: "<b>New Zealand</b>"
-              },
-              planet: "  <b>Earth</b>  "
+        "and should be ok": {
+          topic: function(schema) {
+            var getSource = function() {
+              return {
+                town: "  Auckland  ",
+                country: {
+                  id: 1,
+                  name: "<b>New Zealand</b>"
+                },
+                planet: "  <b>Earth</b>  "
+              };
             };
-          };
-          var source = getSource();
-          return {
-            res: revalidator.validate(source, schema),
-            source: source,
-            originalSource: getSource()
-          };
+            var source = getSource();
+            return {
+              res: revalidator.validate(source, schema),
+              source: source,
+              originalSource: getSource()
+            };
+          },
+          "return an object with `valid` set to true": function(topic) {
+            assertValid(topic.res);
+          },
+          "and modified source object": function(topic) {
+            assert.strictEqual(
+              topic.source.town,
+              revalidator.validate.casts.trim(topic.originalSource.town)
+            );
+            assert.strictEqual(
+              topic.source.country.name,
+              revalidator.validate.casts.stripTags(topic.originalSource.country.name)
+            );
+            assert.strictEqual(
+              topic.source.planet,
+              revalidator.validate.casts.stripTags(
+                revalidator.validate.casts.trim(topic.originalSource.planet)
+              )
+            );
+          }
         },
-        "return an object with `valid` set to true": function(topic) {
-          assertValid(topic.res);
-        },
-        "and modified source object": function(topic) {
-          assert.strictEqual(
-            topic.source.town,
-            revalidator.validate.casts.trim(topic.originalSource.town)
-          );
-          assert.strictEqual(
-            topic.source.country.name,
-            revalidator.validate.casts.stripTags(topic.originalSource.country.name)
-          );
-          assert.strictEqual(
-            topic.source.planet,
-            revalidator.validate.casts.stripTags(
-              revalidator.validate.casts.trim(topic.originalSource.planet)
-            )
-          );
+        "but min length prevents casting of 'town' field": {
+          topic: function(schema) {
+            var getSource = function() {
+              return {
+                town: " N",
+                country: {
+                  id: 1,
+                  name: "<b>New Zealand</b>"
+                },
+                planet: "  <b>Earth</b>  "
+              };
+            };
+            var source = getSource();
+            return {
+              res: revalidator.validate(source, schema),
+              source: source,
+              originalSource: getSource()
+            }
+          },
+          "return an object with `valid` set to false": function(topic) {
+            assertInvalid(topic.res);
+          },
+          "and an error with 'minLength' attribute and 'town'": function(topic) {
+            assertHasError('minLength', 'town')(topic.res);
+          },
+          "and not modified 'town'": function(topic) {
+            assert.strictEqual(topic.source.town, topic.originalSource.town);
+          },
+          "and modified 'planet'": function(topic) {
+            assert.strictEqual(
+              topic.source.planet,
+              revalidator.validate.casts.stripTags(
+                revalidator.validate.casts.trim(topic.originalSource.planet)
+              )
+            );
+          }
         }
       },
       "uncastable values": {
-        topic: function(schema) {
-          return revalidator.validate({
-              town: null,
-              country: {
-                id: 1,
-                name: "<b>New Zealand</b>"
-              },
-              planet: 1
-            }, schema);
+        "(values broke cast function)": {
+          topic: function(schema) {
+            return revalidator.validate({
+                town: null,
+                country: {
+                  id: 1,
+                  name: "<b>New Zealand</b>"
+                },
+                planet: 1
+              }, schema);
+          },
+          "return an object with `valid` set to false": function(topic) {
+            assertInvalid(topic);
+          },
+          "and an error with 'casts' attribute and 'town'": assertHasError('casts', 'town'),
+          "and an error with 'casts' attribute and 'planet'": assertHasError('casts', 'planet')
         },
-        "return an object with `valid` set to false": function(topic) {
-          assertInvalid(topic);
-        },
-        "and an error with 'casts' attribute and 'town'": assertHasError('casts', 'town'),
-        "and an error with 'casts' attribute and 'planet'": assertHasError('casts', 'planet')
+        "(values of uncastable types)": {
+          topic: function(schema) {
+            return revalidator.validate({
+                town: [1, 2],
+                country: {
+                  id: 1,
+                  name: "<b>New Zealand</b>"
+                },
+                planet: {name: "Earth"}
+              }, schema);
+          },
+          "return an object with `valid` set to false": function(topic) {
+            assertInvalid(topic);
+          },
+          "and an error with 'casts' attribute and bad type messages": function(res) {
+            assert.strictEqual(res.errors[0].attribute, 'casts');
+            assert.strictEqual(res.errors[0].property, 'town');
+            assert.strictEqual(res.errors[0].message, 'bad property type for casting: array');
+            assert.strictEqual(res.errors[1].attribute, 'casts');
+            assert.strictEqual(res.errors[1].property, 'planet');
+            assert.strictEqual(res.errors[1].message, 'bad property type for casting: object');
+          }
+        }
       }
     }
   }
