@@ -670,7 +670,7 @@ vows.describe('revalidator', {
             }
         };
       },
-      "and castable values": {
+      "castable values": {
         topic: function(schema) {
           var getSource = function() {
             return {
