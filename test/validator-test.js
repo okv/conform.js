@@ -653,7 +653,7 @@ vows.describe('revalidator', {
         return {
             properties: {
               town: {
-                type: "string",
+                type: ["string", "null"],
                 cast: "trim"
               },
               country: {
@@ -664,7 +664,7 @@ vows.describe('revalidator', {
                 }
               },
               planet: {
-                type: "string",
+                type: ["string", "integer"],
                 cast: ["stripTags", revalidator.validate.casts.trim]
               }
             }
@@ -708,6 +708,23 @@ vows.describe('revalidator', {
             )
           );
         }
+      },
+      "uncastable values": {
+        topic: function(schema) {
+          return revalidator.validate({
+              town: null,
+              country: {
+                id: 1,
+                name: "<b>New Zealand</b>"
+              },
+              planet: 1
+            }, schema);
+        },
+        "return an object with `valid` set to false": function(topic) {
+          assertInvalid(topic);
+        },
+        "and an error with 'casts' attribute and 'town'": assertHasError('casts', 'town'),
+        "and an error with 'casts' attribute and 'planet'": assertHasError('casts', 'planet')
       }
     }
   }
