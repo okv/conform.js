@@ -73,14 +73,22 @@ This will return with a value indicating if the `obj` conforms to the `schema`. 
 
 #### Available Options
 
-* __validateFormats__: Enforce format constraints (*default true*)
-* __validateFormatsStrict__: When `validateFormats` is _true_ treat unrecognized formats as validation errors (*default false*)
-* __validateFormatExtensions__: When `validateFormats` is _true_ also validate formats defined in `validate.formatExtensions` (*default true*)
-* __cast__: Enforce casting of some types (for integers/numbers are only supported) when it's possible, e.g. `"42" => 42`, but `"forty2" => "forty2"` for the `integer` type (*default false*)
-* __castSource__: Apply casting (see `cast` option above) to source object (*default false*)
-* __additionalProperties__: Default value for object `additionalProperties` attribute (*default true*)
-* __applyDefaultValue__: Apply value  of `default` attribute to source object (*default false*)
-* __validateDefaultValue__: If true value of `default` attribute will be checked to conforms schema (*default false*)
+* __validateFormats__: Enforce format constraints (_default true_)
+* __validateFormatsStrict__: When `validateFormats` is _true_ treat unrecognized formats as validation errors (_default false_)
+* __validateFormatExtensions__: When `validateFormats` is _true_ also validate formats defined in `validate.formatExtensions` (_default true_)
+* __cast__: Enforce casting of some types (for integers/numbers are only supported) when it's possible, e.g. `"42" => 42`, but `"forty2" => "forty2"` for the `integer` type (_default false_)
+* __castSource__: Apply casting (see `cast` option above) to source object (_default false_)
+* __additionalProperties__: Default value for object `additionalProperties` attribute (_default true_)
+* __applyDefaultValue__: Apply value  of `default` attribute to source object (_default false_)
+* __validateDefaultValue__: If true value of `default` attribute will be checked to conforms schema (_default false_)
+
+**Notice**: all options (such as *castSource*, *additionalProperties*) as well as
+attributes (such as [filter](#filter)) which modifies source object
+do that directly and immediately. That means that if some property (e.g. `property1`)
+was modified but later, on other property (e.g. `property2`), validation or
+filtering fails source object will be with modified `property1` despite on `valid`
+equals to `false` at result.
+
 
 ### Schema
 For a property an `value` is that which is given as input for validation where as an `expected value` is the value of the below fields
