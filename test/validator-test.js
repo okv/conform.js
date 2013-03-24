@@ -642,12 +642,12 @@ vows.describe('revalidator', {
         }
       }
     },
-    "casting": {
+    "filtering": {
       topic: function() {
-        revalidator.validate.casts.trim = function(value) {
+        revalidator.validate.filters.trim = function(value) {
           return value.replace(/^\s+|\s+$/g, '');
         };
-        revalidator.validate.casts.stripTags = function(value) {
+        revalidator.validate.filters.stripTags = function(value) {
           return value.replace(/<(?:.|\n)*?>/gm, '');
         };
         return {
@@ -655,23 +655,23 @@ vows.describe('revalidator', {
               town: {
                 type: ["string", "null", "array"],
                 minLength: 3,
-                cast: "trim"
+                filter: "trim"
               },
               country: {
                 type: "object",
                 properties: {
                   id: { type: "integer" },
-                  name: { type: "string", cast: "stripTags" }
+                  name: { type: "string", filter: "stripTags" }
                 }
               },
               planet: {
                 type: ["string", "integer", "object"],
-                cast: ["stripTags", revalidator.validate.casts.trim]
+                filter: ["stripTags", revalidator.validate.filters.trim]
               }
             }
         };
       },
-      "castable values": {
+      "with valid values": {
         "and should be ok": {
           topic: function(schema) {
             var getSource = function() {
@@ -697,21 +697,21 @@ vows.describe('revalidator', {
           "and modified source object": function(topic) {
             assert.strictEqual(
               topic.source.town,
-              revalidator.validate.casts.trim(topic.originalSource.town)
+              revalidator.validate.filters.trim(topic.originalSource.town)
             );
             assert.strictEqual(
               topic.source.country.name,
-              revalidator.validate.casts.stripTags(topic.originalSource.country.name)
+              revalidator.validate.filters.stripTags(topic.originalSource.country.name)
             );
             assert.strictEqual(
               topic.source.planet,
-              revalidator.validate.casts.stripTags(
-                revalidator.validate.casts.trim(topic.originalSource.planet)
+              revalidator.validate.filters.stripTags(
+                revalidator.validate.filters.trim(topic.originalSource.planet)
               )
             );
           }
         },
-        "but min length prevents casting of 'town' field": {
+        "but min length prevents filtering of 'town' field": {
           topic: function(schema) {
             var getSource = function() {
               return {
@@ -742,15 +742,15 @@ vows.describe('revalidator', {
           "and modified 'planet'": function(topic) {
             assert.strictEqual(
               topic.source.planet,
-              revalidator.validate.casts.stripTags(
-                revalidator.validate.casts.trim(topic.originalSource.planet)
+              revalidator.validate.filters.stripTags(
+                revalidator.validate.filters.trim(topic.originalSource.planet)
               )
             );
           }
         }
       },
-      "uncastable values": {
-        "(values broke cast function)": {
+      "with invalid values": {
+        "(values break filter function)": {
           topic: function(schema) {
             return revalidator.validate({
                 town: null,
@@ -764,10 +764,10 @@ vows.describe('revalidator', {
           "return an object with `valid` set to false": function(topic) {
             assertInvalid(topic);
           },
-          "and an error with 'casts' attribute and 'town'": assertHasError('casts', 'town'),
-          "and an error with 'casts' attribute and 'planet'": assertHasError('casts', 'planet')
+          "and an error with 'filter' attribute and 'town'": assertHasError('filter', 'town'),
+          "and an error with 'filter' attribute and 'planet'": assertHasError('filter', 'planet')
         },
-        "(values of uncastable types)": {
+        "(values of unfilterable types)": {
           topic: function(schema) {
             return revalidator.validate({
                 town: [1, 2],
@@ -781,13 +781,13 @@ vows.describe('revalidator', {
           "return an object with `valid` set to false": function(topic) {
             assertInvalid(topic);
           },
-          "and an error with 'casts' attribute and bad type messages": function(res) {
-            assert.strictEqual(res.errors[0].attribute, 'casts');
+          "and an error with 'filter' attribute and bad type messages": function(res) {
+            assert.strictEqual(res.errors[0].attribute, 'filter');
             assert.strictEqual(res.errors[0].property, 'town');
-            assert.strictEqual(res.errors[0].message, 'bad property type for casting: array');
-            assert.strictEqual(res.errors[1].attribute, 'casts');
+            assert.strictEqual(res.errors[0].message, 'bad property type for filtering: array');
+            assert.strictEqual(res.errors[1].attribute, 'filter');
             assert.strictEqual(res.errors[1].property, 'planet');
-            assert.strictEqual(res.errors[1].message, 'bad property type for casting: object');
+            assert.strictEqual(res.errors[1].message, 'bad property type for filtering: object');
           }
         }
       }
