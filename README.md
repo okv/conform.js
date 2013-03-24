@@ -1,14 +1,24 @@
-# revalidator [![Build Status](https://secure.travis-ci.org/flatiron/revalidator.png)](http://travis-ci.org/flatiron/revalidator)
+# conform
 
-A cross-browser / node.js validator used by resourceful and flatiron.
+A schema validation and filtering framework for node.js  
+It's a fork of [revalidator](https://github.com/flatiron/revalidator) which
+extends him with ability to modify source object - apply default values, casts,
+filters to source objects (see *castSource*, *applyDefaultValue* at
+[options](#available-options), [filter section](#filter)) and other
+features such as *additionalProperties* [option](#available-options).
+
+Currently conform with default options fully backward compatible with
+revalidator 0.1.5 (except browsers support which should be ok but don't well
+tested cause no convenient way to do that with vows testing framework which
+is currently used).
 
 ## Example
-The core of `revalidator` is simple and succinct: `revalidator.validate(obj, schema)`: 
+The core of `conform` is simple and succinct: `conform.validate(obj, schema)`: 
  
 ``` js
-  var revalidator = require('revalidator');
+  var conform = require('conform');
   
-  console.dir(revalidator.validate(someObject, {
+  console.dir(conform.validate(someObject, {
     properties: {
       url: {
         description: 'the url the object should be stored at',
@@ -39,25 +49,18 @@ This will return with a value indicating if the `obj` conforms to the `schema`. 
   }
 ```
 
-In the browser, the validation function is exposed on `window.validate` by simply including `revalidator.js`.
-
 ## Installation
 
-### Installing npm (node package manager)
+### Installing conform
 ``` bash
-  $ curl http://npmjs.org/install.sh | sh
-```
-
-### Installing revalidator
-``` bash 
-  $ [sudo] npm install revalidator
+  $ npm install conform
 ```
 
 ## Usage
 
-`revalidator` takes json-schema as input to validate objects.
+`conform` takes json-schema as input to validate objects.
 
-### revalidator.validate (obj, schema, options)
+### conform.validate (obj, schema, options)
 
 This will return with a value indicating if the `obj` conforms to the `schema`. If it does not, a descriptive object will be returned containing the errors encountered with validation.
 
@@ -295,15 +298,19 @@ We also allow custom message for different constraints
 ```
 
 ## Tests
-All tests are written with [vows][0] and should be run with [npm][1]:
+Clone repository from github, `cd` into cloned dir and install dev dependencies
+
+``` bash
+  $ npm install
+```
+
+run tests
 
 ``` bash
   $ npm test
 ```
 
-#### Author: [Charlie Robbins](http://nodejitsu.com), [Alexis Sellier](http://cloudhead.io)
-#### Contributors: [Fedor Indutny](http://github.com/indutny), [Bradley Meck](http://github.com/bmeck), [Laurie Harper](http://laurie.holoweb.net/)
+#### conform.js author: [Oleg Korobenko](https://github.com/okv)
+#### revalidator authors: [Charlie Robbins](http://nodejitsu.com), [Alexis Sellier](http://cloudhead.io)
+#### revalidator contributors: [Fedor Indutny](http://github.com/indutny), [Bradley Meck](http://github.com/bmeck), [Laurie Harper](http://laurie.holoweb.net/)
 #### License: Apache 2.0
-
-[0]: http://vowsjs.org
-[1]: http://npmjs.org
