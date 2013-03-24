@@ -227,6 +227,24 @@ Value is valid only if the dependent value is valid
 }
 ```
 
+#### filter
+Apply filter on `value`
+
+```js
+{
+  filter: function (v) {
+    return v.toLowerCase();
+  }
+}
+```
+
+`filter` attribute can be array of filters.  
+Filter applies only after successful validation of `value`.  
+Filter errors as validation errors sets `valid` to *false* and provides error
+description at `errors` array.  
+Complex types (array, object) can't be filtered directly, use filter for
+array items or object properties instead.
+
 ### Nested Schema
 We also allow nested schema
 
