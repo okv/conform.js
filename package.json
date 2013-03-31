@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git://github.com/okv/conform.js"
   },
+  "keywords": [
+    "validator", "validation", "filter", "filtering", "params", "schema",
+    "jsonschema"
+  ],
   "devDependencies": {
     "vows": "0.6.x"
   },
