@@ -642,6 +642,51 @@ vows.describe('revalidator', {
         }
       }
     },
+    "with <exitOnFirstError> option and source object with 2 errors": {
+      topic: {
+        schema: {
+          properties: {
+            town: {
+              type: "string"
+            },
+            country: {
+              type: "object",
+              properties: {
+                id: { type: "integer" },
+                name: { type: "string" }
+              },
+              "default": {
+                id: 1,
+                name: "New Zealand"
+              }
+            },
+            planet: {
+              "type": "string",
+              "default": "Earth"
+            }
+          }
+        },
+        source: {town: 1, planet: 2}
+      },
+      "when option enabled": {
+        topic: function (topic) {
+          return revalidator.validate(topic.source, topic.schema, {exitOnFirstError: true});
+        },
+        "return an object with `valid` set to false": assertInvalid,
+        "1 error at errors": function(topic) {
+          assert.strictEqual(topic.errors.length, 1);
+        }
+      },
+      "when option not enabled": {
+          topic: function (topic) {
+            return revalidator.validate(topic.source, topic.schema);
+          },
+          "return an object with `valid` set to false": assertInvalid,
+          "2 errors at errors": function(topic) {
+            assert.strictEqual(topic.errors.length, 2);
+          }
+      }
+    },
     "filtering": {
       topic: function() {
         revalidator.validate.filters.trim = function(value) {

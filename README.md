@@ -81,6 +81,7 @@ This will return with a value indicating if the `obj` conforms to the `schema`. 
 * __additionalProperties__: Default value for object `additionalProperties` attribute (_default true_)
 * __applyDefaultValue__: Apply value  of `default` attribute to source object (_default false_)
 * __validateDefaultValue__: If true value of `default` attribute will be checked to conforms schema (_default false_)
+* __exitOnFirstError__: If true validation will be stopped after first error occurred, `valid` will be `false` and `errors` will contain single error (_default false_)
 
 **Notice**: all options (such as *castSource*, *additionalProperties*) as well as
 attributes (such as [filter](#filter)) which modifies source object
