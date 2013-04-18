@@ -642,7 +642,7 @@ vows.describe('revalidator', {
         }
       }
     },
-    "with <exitOnFirstError> option and source object with 2 errors": {
+    "with break on first error options and source object with 2 errors": {
       topic: {
         schema: {
           properties: {
@@ -668,7 +668,7 @@ vows.describe('revalidator', {
         },
         source: {town: 1, planet: 2}
       },
-      "when option enabled": {
+      "when <exitOnFirstError> option enabled": {
         topic: function (topic) {
           return revalidator.validate(topic.source, topic.schema, {exitOnFirstError: true});
         },
@@ -677,7 +677,7 @@ vows.describe('revalidator', {
           assert.strictEqual(topic.errors.length, 1);
         }
       },
-      "when option not enabled": {
+      "when <exitOnFirstError> option not enabled": {
           topic: function (topic) {
             return revalidator.validate(topic.source, topic.schema);
           },
@@ -685,6 +685,23 @@ vows.describe('revalidator', {
           "2 errors at errors": function(topic) {
             assert.strictEqual(topic.errors.length, 2);
           }
+      },
+      "when <failOnFirstError> option enabled": {
+        topic: function (topic) {
+          assert.throws(function() {
+            revalidator.validate(topic.source, topic.schema, {failOnFirstError: true});
+          }, function(err) {
+              assert.strictEqual(err.message, 'Attribute `type` of property `town` hasn`t ' +
+              'pass check, expected value: `string` actual value: `number` ' +
+              'error message: `must be of string type`');
+              assert.ok(err.info);
+              return err instanceof Error;
+          });
+          return true;
+        },
+        "should throws an error and return true": function(topic) {
+          assert.strictEqual(topic, true);
+        }
       }
     },
     "filtering": {
