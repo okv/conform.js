@@ -223,7 +223,8 @@ Value must be a valid format
 Value must conform to constraint denoted by expected value
 
 ```js
-{ conform: function (v) {
+{ conform: function (v, o) {
+    // `o` is current object at validation
     if (v%3==1) return true;
     return false;
   }
