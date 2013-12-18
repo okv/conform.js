@@ -401,17 +401,19 @@ vows.describe('revalidator', {
             properties: {
               answer: { type: "integer" },
               answer2: { type: "number" },
+              answer3: {type: "array", items: {type: "string"}},
               is_ready1: { type: "boolean" },
               is_ready2: { type: "boolean" },
               is_ready3: { type: "boolean" },
               is_ready4: { type: "boolean" },
               is_ready5: { type: "boolean" },
-              is_ready6: { type: "boolean" },
+              is_ready6: { type: "boolean" }
             }
           };
           var source = {
             answer: "42",
             answer2: "42.2",
+            answer3: ["yep"],
             is_ready1: "true",
             is_ready2: "1",
             is_ready3: 1,
@@ -435,6 +437,9 @@ vows.describe('revalidator', {
           "with float": function(topic) {
             return assert.strictEqual(topic.source.answer2, 42.2);
           },
+          "with not affected array": function(topic) {
+            return assert.deepEqual(topic.source.answer3, ["yep"]);
+          },
           "with boolean true from string 'true'": function(topic) {
             return assert.strictEqual(topic.source.is_ready1, true);
           },
@@ -452,7 +457,7 @@ vows.describe('revalidator', {
           },
           "with boolean false from number 0": function(topic) {
             return assert.strictEqual(topic.source.is_ready6, false);
-          },
+          }
         }
       },
       "and <boolean> property": {
