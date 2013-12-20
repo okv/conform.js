@@ -402,6 +402,7 @@ vows.describe('revalidator', {
               answer: { type: "integer" },
               answer2: { type: "number" },
               answer3: {type: "array", items: {type: "string"}},
+              answer4: {type: "array", items: {type: "integer"}},
               is_ready1: { type: "boolean" },
               is_ready2: { type: "boolean" },
               is_ready3: { type: "boolean" },
@@ -414,6 +415,7 @@ vows.describe('revalidator', {
             answer: "42",
             answer2: "42.2",
             answer3: ["yep"],
+            answer4: [1, "2", 3, "4"],
             is_ready1: "true",
             is_ready2: "1",
             is_ready3: 1,
@@ -437,8 +439,17 @@ vows.describe('revalidator', {
           "with float": function(topic) {
             return assert.strictEqual(topic.source.answer2, 42.2);
           },
-          "with not affected array": function(topic) {
+          "with not affected array of strings": function(topic) {
             return assert.deepEqual(topic.source.answer3, ["yep"]);
+          },
+          "with casted items at array of integers": function(topic) {
+            var actual = topic.source.answer4;
+            if (!Array.isArray(actual)) assert.fail(actual, 'Not an array');
+            //coz strict version of deepEqual doesn't exists
+            var expected = [1, 2, 3, 4];
+            topic.source.answer4.forEach(function(num, index) {
+              assert.strictEqual(num, expected[index]);
+            });
           },
           "with boolean true from string 'true'": function(topic) {
             return assert.strictEqual(topic.source.is_ready1, true);
