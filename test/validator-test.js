@@ -745,12 +745,16 @@ vows.describe('revalidator', {
               planet: {
                 type: ["string", "integer", "object"],
                 filter: ["stripTags", revalidator.validate.filters.trim]
+              },
+              addresses: {
+                type: "array",
+                items: {type: "string", filter: "trim"}
               }
             }
         };
       },
       "with valid values": {
-        "and should be ok": {
+        "should be ok": {
           topic: function(schema) {
             var getSource = function() {
               return {
@@ -823,6 +827,28 @@ vows.describe('revalidator', {
               revalidator.validate.filters.stripTags(
                 revalidator.validate.filters.trim(topic.originalSource.planet)
               )
+            );
+          }
+        },
+        "and array items should be ok": {
+          topic: function(schema) {
+            var getSource = function() {
+              return {addresses: [' street 1  ', 'street2', '  street3     ']};
+            };
+            var source = getSource();
+            return {
+              res: revalidator.validate(source, schema),
+              source: source,
+              originalSource: getSource()
+            };
+          },
+          "return an object with `valid` set to true": function(topic) {
+            assertValid(topic.res);
+          },
+          "and modified source object": function(topic) {
+            assert.deepEqual(
+              topic.source.addresses,
+              topic.source.addresses.map(revalidator.validate.filters.trim)
             );
           }
         }
