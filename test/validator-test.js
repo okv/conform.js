@@ -100,6 +100,7 @@ vows.describe('revalidator', {
     "with <divisibleBy> decimal": assertValidates ( 0.2,      0.009,     { divisibleBy: 0.01 }),
     "with <enum>":                assertValidates ("orange",  "cigar",   { enum: ["orange", "apple", "pear"] }),
     "with <format>:'url'":        assertValidates ('http://test.com/', 'hello', { format: 'url' }),
+    "with <required> as function": assertValidates (1,   undefined,        { required: function(obj, prop) {}}),
     "with <dependencies>": {
       topic: {
         properties: {
@@ -157,6 +158,7 @@ vows.describe('revalidator', {
       },
       "when the object conforms": {
         topic: function (schema) {
+          console.log('>>>> ', JSON.stringify(schema, null, 4))
           return revalidator.validate({ town: "luna", x: 1 }, schema);
         },
         "return an object with `valid` set to true": assertValid,
