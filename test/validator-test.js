@@ -100,6 +100,10 @@ vows.describe('revalidator', {
     "with <divisibleBy> decimal": assertValidates ( 0.2,      0.009,     { divisibleBy: 0.01 }),
     "with <enum>":                assertValidates ("orange",  "cigar",   { enum: ["orange", "apple", "pear"] }),
     "with <format>:'url'":        assertValidates ('http://test.com/', 'hello', { format: 'url' }),
+    "with <format>:'color' hex-short":      assertValidates ('#abc', '#abcd', { format: 'color' }),
+    "with <format>:'color' hex":	assertValidates ('#666ade', '#abcdks', { format: 'color' }),
+    "with <format>:'color' rgb":	assertValidates ('rgb(255,0, 123)', 'rgb(0, 256, 1)', { format: 'color' }),
+    "with <format>:'color' word":	assertValidates ('yellow', 'yyelow', { format: 'color' }),
     "with <required> as function": assertValidates (1,   undefined,        { required: function(obj, prop) {}}),
     "with <dependencies>": {
       topic: {
