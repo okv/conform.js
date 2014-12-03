@@ -104,7 +104,6 @@ vows.describe('revalidator', {
     "with <format>:'color' hex":	assertValidates ('#666ade', '#abcdks', { format: 'color' }),
     "with <format>:'color' rgb":	assertValidates ('rgb(255,0, 123)', 'rgb(0, 256, 1)', { format: 'color' }),
     "with <format>:'color' word":	assertValidates ('yellow', 'yyelow', { format: 'color' }),
-    "with <required> as function": assertValidates (1,   undefined,        { required: function(obj, prop) {}}),
     "with <dependencies>": {
       topic: {
         properties: {
@@ -162,7 +161,6 @@ vows.describe('revalidator', {
       },
       "when the object conforms": {
         topic: function (schema) {
-          console.log('>>>> ', JSON.stringify(schema, null, 4))
           return revalidator.validate({ town: "luna", x: 1 }, schema);
         },
         "return an object with `valid` set to true": assertValid,
