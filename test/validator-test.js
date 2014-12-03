@@ -293,6 +293,17 @@ vows.describe('revalidator', {
         category:  { type: 'string' },
         palindrome: {type: 'string', conform: function(val) {
           return val == val.split("").reverse().join(""); }
+        },
+        coordinates: {
+          type: 'array',
+          items: {
+            type: 'array',
+            minItems: 2,
+            maxItems: 2,
+            items: {
+              type: 'Number'
+            }
+          }
         }
       },
       patternProperties: {
@@ -312,6 +323,7 @@ vows.describe('revalidator', {
         published: true,
         category: 'misc',
         palindrome: 'dennis sinned',
+        coordinates: [[1, 2], [3, 4]],
         _flag: true
       },
       "can be validated with `revalidator.validate`": {
@@ -432,6 +444,15 @@ vows.describe('revalidator', {
               answer2: { type: "number" },
               answer3: {type: "array", items: {type: "string"}},
               answer4: {type: "array", items: {type: "integer"}},
+              answer5: {
+                type: "array",
+                items: {
+                  type: "array",
+                  items: {
+                    type: 'number'
+                  }
+                }
+              },
               is_ready1: { type: "boolean" },
               is_ready2: { type: "boolean" },
               is_ready3: { type: "boolean" },
@@ -445,6 +466,7 @@ vows.describe('revalidator', {
             answer2: "42.2",
             answer3: ["yep"],
             answer4: [1, "2", 3, "4"],
+            answer5: [[1], ["2"], [3], ["4"]],
             is_ready1: "true",
             is_ready2: "1",
             is_ready3: 1,
