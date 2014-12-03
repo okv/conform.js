@@ -500,6 +500,17 @@ vows.describe('revalidator', {
               assert.strictEqual(num, expected[index]);
             });
           },
+          "with casted items of nested array of integers": function(topic) {
+            var actual = topic.source.answer5;
+            if (!Array.isArray(actual)) assert.fail(actual, 'Not an array');
+            var expected = [[1], [2], [3], [4]];
+            topic.source.answer5.forEach(function(ar, index) {
+              if (!Array.isArray(ar)) assert.fail(ar, 'Not an array');
+              ar.forEach(function(num, idx) {
+                assert.strictEqual(num, expected[index][idx]);
+              });
+            });
+          },
           "with boolean true from string 'true'": function(topic) {
             return assert.strictEqual(topic.source.is_ready1, true);
           },
