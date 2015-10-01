@@ -767,9 +767,7 @@ vows.describe('revalidator', {
           assert.throws(function() {
             revalidator.validate(topic.source, topic.schema, {failOnFirstError: true});
           }, function(err) {
-              assert.strictEqual(err.message, 'Attribute `type` of property `town` hasn`t ' +
-              'pass check, expected value: `string` actual value: `number` ' +
-              'error message: `must be of string type`');
+              assert.strictEqual(err.message, 'Property "town" must be of string type');
               assert.ok(err.info);
               return err instanceof Error;
           });
