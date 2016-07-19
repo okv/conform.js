@@ -1,6 +1,6 @@
 {
   "name": "conform",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "A schema validation and filtering framework",
   "author": "Oleg Korobenko <oleg.korobenko@gmail.com>",
   "repository": {
@@ -8,7 +8,12 @@
     "url": "git://github.com/okv/conform.js"
   },
   "keywords": [
-    "validator", "validation", "filter", "filtering", "params", "schema",
+    "validator",
+    "validation",
+    "filter",
+    "filtering",
+    "params",
+    "schema",
     "jsonschema"
   ],
   "devDependencies": {
@@ -22,4 +27,3 @@
     "node": ">= 0.4.0"
   }
 }
-
