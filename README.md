@@ -113,6 +113,7 @@ The `type of value` should be equal to the expected value
 { type: 'boolean' }
 { type: 'object' }
 { type: 'null' }
+{ type: 'date' }
 { type: 'any' }
 { type: ['boolean', 'string'] }
 ```
