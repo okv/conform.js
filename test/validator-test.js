@@ -90,6 +90,7 @@ vows.describe('revalidator', {
     "with <types>:bool,num":      assertValidates (false,     'hello',   { type: ["boolean", "number"] }),
     "with <types>:bool,num":      assertValidates (544,       null,      { type: ["boolean", "number"] }),
     "with <type>:'null'":         assertValidates (null,      false,     { type: "null" }),
+    "with <type>:'date'":         assertValidates (new Date(),false,     { type: "date" }),
     "with <type>:'any'":          assertValidates (9,                    { type: "any" }),
     "with <pattern>":             assertValidates ("kaboom", "42",       { pattern: /^[a-z]+$/ }),
     "with <maxLength>":           assertValidates ("boom",   "kaboom",   { maxLength: 4 }),
@@ -417,7 +418,8 @@ vows.describe('revalidator', {
       topic: {
         properties: {
           answer: { type: "integer" },
-          is_ready: { type: "boolean" }
+          is_ready: { type: "boolean" },
+          date: { type: "date" }
         }
       },
       "and <integer> property": {
@@ -430,6 +432,22 @@ vows.describe('revalidator', {
         "is uncastable string": {
           topic: function (schema) {
             return revalidator.validate({ answer: "forty2" }, schema, { cast: true });
+          },
+          "return an object with `valid` set to false": assertInvalid
+        }
+      },
+      "and <date> property": {
+        "is castable date ISO string": {
+          topic: function (schema) {
+            var doc = { date: "2017-04-06T07:02:12.856Z" };
+            return revalidator.validate(doc, schema, { cast: true });
+          },
+          "return an object with `valid` set to true": assertValid
+        },
+        "is uncastable string": {
+          topic: function (schema) {
+            var doc = { date: "not a valid date" };
+            return revalidator.validate(doc, schema, { cast: true });
           },
           "return an object with `valid` set to false": assertInvalid
         }
@@ -456,7 +474,10 @@ vows.describe('revalidator', {
               is_ready3: { type: "boolean" },
               is_ready4: { type: "boolean" },
               is_ready5: { type: "boolean" },
-              is_ready6: { type: "boolean" }
+              is_ready6: { type: "boolean" },
+              date1: { type: "date" },
+              date2: { type: "date" },
+              date3: { type: "date" }
             }
           };
           var source = {
@@ -470,7 +491,10 @@ vows.describe('revalidator', {
             is_ready3: 1,
             is_ready4: "false",
             is_ready5: "0",
-            is_ready6: 0
+            is_ready6: 0,
+            date1: "2017-04-06T00:00:00",
+            date2: "Apr 06 2017",
+            date3: new Date("Thu Apr 06 2017 00:00:00")
           };
           var options = { cast: true, castSource: true };
           return {
@@ -528,6 +552,15 @@ vows.describe('revalidator', {
           },
           "with boolean false from number 0": function(topic) {
             return assert.strictEqual(topic.source.is_ready6, false);
+          },
+          "with valid date from ISO string": function(topic) {
+            return assert.deepEqual(topic.source.date1, new Date("2017-04-06T00:00:00"));
+          },
+          "with valid date from date string": function(topic) {
+            return assert.deepEqual(topic.source.date2, new Date("Apr 06 2017"));
+          },
+          "with valid date from date": function(topic) {
+            return assert.deepEqual(topic.source.date3, new Date("Apr 06 2017"));
           }
         }
       },
