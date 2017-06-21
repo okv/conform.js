@@ -259,6 +259,42 @@ description at `errors` array.
 Complex types (array, object) can't be filtered directly, use filter for
 array items or object properties instead.
 
+### Arrays
+For array type you can use special set of params:
+
+`uniqueItems` Boolean value, check that all items unique.
+
+`minItems` Minimum items count.
+
+`maxItems` Maximum items count.
+
+`items` Object that describe every array object
+
+Array of tags definition:
+```js
+tags: {
+ type: 'array',
+ uniqueItems: true,
+ minItems: 2,
+ items: {
+  type: 'string',
+  pattern: /[a-z ]+/
+ }
+}
+```
+
+Definition for tuple:
+```js
+tuple: {
+ type: 'array',
+ minItems: 2,
+ maxItems: 2,
+ items: {
+  type: ['string', 'number']
+ }
+}
+```
+
 ### Nested Schema
 We also allow nested schema
 
