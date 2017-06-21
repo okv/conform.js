@@ -105,6 +105,8 @@ vows.describe('revalidator', {
     "with <format>:'color' hex":	assertValidates ('#666ade', '#abcdks', { format: 'color' }),
     "with <format>:'color' rgb":	assertValidates ('rgb(255,0, 123)', 'rgb(0, 256, 1)', { format: 'color' }),
     "with <format>:'color' word":	assertValidates ('yellow', 'yyelow', { format: 'color' }),
+    "with <type>:'array' and <format>:'url'": assertValidates('http://test.com/', '1ello', {format: 'url', type: ['string', 'null']}),
+    "with <type>:'array' and <format>:'url'": assertValidates(null, '1ello', {format: 'url', type: ['string', 'null']}),
     "with <dependencies>": {
       topic: {
         properties: {
