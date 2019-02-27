@@ -1,6 +1,6 @@
 {
   "name": "conform",
-  "version": "0.2.16",
+  "version": "0.3.0",
   "description": "A schema validation and filtering framework",
   "author": "Oleg Korobenko <oleg.korobenko@gmail.com>",
   "repository": {
